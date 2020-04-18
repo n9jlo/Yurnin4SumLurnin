@@ -1,0 +1,4 @@
+This is a file that is supposed to be encoded.
+Super secret message appears next.
+Something something something else.
+Do the thing and don't tell me about it until it's over.
