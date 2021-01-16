@@ -1,7 +1,10 @@
 plugins:
   - jekyll-relative-links
+  - jekyll-diagrams
 relative-links:
   enabled: true
   collections: true
 include:
   - values.md
+
+theme: jekyll-theme-slate
