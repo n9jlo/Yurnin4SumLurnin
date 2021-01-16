@@ -5,3 +5,5 @@ relative-links:
   collections: true
 include:
   - values.md
+
+theme: jekyll-theme-slate
