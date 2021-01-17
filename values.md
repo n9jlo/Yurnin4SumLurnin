@@ -62,4 +62,45 @@ the times where things go well, we thank providence and seek to do homage to
 providence by maintaining the same fertility of opportunies for others the will
 be rewarded in some same way.
 
+#### Dunno
 
+```dot
+graph {
+   layout = neato
+   Reliable
+   fe [label="Fair/Equal"]
+   Integrity
+   Trust
+
+}
+```
+
+Seeks not to confuse or distort as it's a form of lying.
+
+Is Giving a form of power?
+
+#### Humble
+
+We believe in equality.  Each person is entitled to most of the same
+kinds of basic civil liberties as the next person.  They deserve some
+degree of respect and deserve to be considered fair and honest until 
+personal experience proves otherwise.
+
+As we exceed in our abilities and amass more and more "power" or
+"control" over our surroundings, we are comforted and grow somewhat
+lax and contented.  We look with pity upon those that don't have our
+comfort or our power.  Our power might come from knowledge that was
+mostly handed to us, but that we might have striven for via study at
+a school.  Because we passed examinations of this suckled knowlege, we
+feel emboldened and elevated from the states of those that might not
+have chosen to attain this knowledge. Because we are in such command
+of knowledge and perhaps think that we understand things more than
+another or perhaps we feel that we've worked harder or are somehow more
+deserving than others.  This leads us to a sense of eliteness and
+entitlement.  We have papers that prove how good we are and medals and
+accolades from others that resound our good deeds and our heroic efforts.
+Others that don't have these things are lesser than us.  They don't deserve
+the things that we deserve.  These are the thoughts.  However, this is not
+really the case. When opportunities are limited and resources are slim, the
+question of best fit comes into play.  Then, it should be via competition
+perhaps that the dispatch of the opportunity should be decided.
