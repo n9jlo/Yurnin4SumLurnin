@@ -11,41 +11,19 @@
 		<script type="module">
 			import {
 				BoxGeometry,
-				BufferGeometry,
-                BufferAttribute,
-				CircleGeometry,
 				Color,
-				ConeGeometry,
-				Curve,
-				CylinderGeometry,
-				DodecahedronGeometry,
-				DoubleSide,
-				ExtrudeGeometry,
-				Float32BufferAttribute,
-				FontLoader,
 				Group,
-				IcosahedronGeometry,
-				LatheGeometry,
-				LineSegments,
-				LineBasicMaterial,
+                AxesHelper,
 				Mesh,
 				MeshStandardMaterial,
 				PerspectiveCamera,
 				PlaneGeometry,
 				PointLight,
 				Scene,
-				Shape,
-				ShapeGeometry,
-				SphereGeometry,
-				Vector2,
-				Vector3,
-				WireframeGeometry,
 				WebGLRenderer
 			} from './js/three.module.js';
 
 			import { OrbitControls } from './js/OrbitControls.js';
-
-			const twoPi = Math.PI * 2;
 
             const scene = new Scene();
             scene.background = new Color( 0x000000);
@@ -77,16 +55,21 @@
             scene.add( lights[ 2 ] );
             scene.add( lights[ 3 ] );
 
-            const group = new Group();
+            const baseMaterial    = new MeshStandardMaterial( { color: 0x202020, flatShading: true } );
             const redMaterial     = new MeshStandardMaterial( { color: 0xff0000, flatShading: true } );
             const greenMaterial   = new MeshStandardMaterial( { color: 0x00ff00, flatShading: true } );
             const blueMaterial    = new MeshStandardMaterial( { color: 0x0000ff, flatShading: true } );
             const orangeMaterial  = new MeshStandardMaterial( { color: 0xff8000, flatShading: true } );
             const whiteMaterial   = new MeshStandardMaterial( { color: 0xffffff, flatShading: true } );
             const yellowMaterial  = new MeshStandardMaterial( { color: 0xffff00, flatShading: true } );
-            const geometry = new PlaneGeometry( 10, 10, 1, 1);
+            const geometry = new PlaneGeometry( 9.5, 9.5, 1, 1);
 
             const cube = new Group();
+
+
+            const boxMesh = new Mesh( new BoxGeometry(9.95,9.95,9.95), baseMaterial);
+            cube.add(boxMesh);
+
             const topMesh = new Mesh( geometry, whiteMaterial);
             topMesh.position.y = 5;
             topMesh.rotation.x = -Math.PI/2;
@@ -116,64 +99,42 @@
             rightMesh.rotation.y = Math.PI / 2;
             cube.add( rightMesh );
 
-            // const refMesh = new Mesh( new BoxGeometry(10,10,10), whiteMaterial);
-            // refMesh.position.y = 15;
-            // group.add( refMesh );
+            const axesHelper = new AxesHelper( 50 );
+            scene.add( axesHelper );
 
-            // const refMesh2 = new Mesh( new BoxGeometry(10,10,10), blueMaterial);
-            // refMesh2.position.x = 15;
-            // group.add( refMesh2 );
-
-            // const refMesh3 = new Mesh( new BoxGeometry(10,10,10), redMaterial);
-            // refMesh3.position.y = -15;
-            // group.add( refMesh3 );
-
-            // const refMesh4 = new Mesh( new BoxGeometry(10,10,10), orangeMaterial);
-            // refMesh4.position.x = -15;
-            // group.add( refMesh4 );
-
-            // const refMesh5 = new Mesh( new BoxGeometry(10,10,10), yellowMaterial);
-            // refMesh5.position.z = -15;
-            // group.add( refMesh5 );
-
-            // const refMesh6 = new Mesh( new BoxGeometry(10,10,10), greenMaterial);
-            // refMesh6.position.z = 15;
-            // group.add( refMesh6 );
-
-
-			// const geometry = new THREE.BoxGeometry();
-			// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-			// const cube = new THREE.Mesh( geometry, material );
-			// scene.add( cube );
-
-            const cube2 = cube.clone(true);
-            const cube3 = cube.clone(true);
-
-            cube2.position.z = 10.1;
-            cube3.position.z = -10.1;
 
             const col = new Group();
             col.add( cube );
-			col.add( cube2 );
-			col.add( cube3 );
 
-            const col2 = col.clone(true);
-            const col3 = col.clone(true);
-            col2.position.y = 10.1;
-            col3.position.y = -10.1;
+            const cube2 = cube.clone(true);
+            cube2.position.z = 10.1;
+			col.add( cube2 );
+
+            const cube3 = cube.clone(true);
+            cube3.position.z = -10.1;
+			col.add( cube3 );
 
             const slice = new Group();
             slice.add( col );
+
+            const col2 = col.clone(true);
+            col2.position.y = 10.1;
             slice.add( col2 );
+
+            const col3 = col.clone(true);
+            col3.position.y = -10.1;
             slice.add( col3 );
 
-            const slice2 = slice.clone(true);
-            const slice3 = slice.clone(true);
-            slice2.position.x = 10.1;
-            slice3.position.x = -10.1;
 
+            const group = new Group();
             group.add( slice );
+
+            const slice2 = slice.clone(true);
+            slice2.position.x = 10.1;
             group.add( slice2 );
+
+            const slice3 = slice.clone(true);
+            slice3.position.x = -10.1;
             group.add( slice3 );
 
             scene.add( group );
