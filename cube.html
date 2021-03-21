@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>My first three.js app</title>
+		<title>3x3 cube</title>
 		<style>
 			body { margin: 0; }
 		</style>
@@ -10,26 +10,25 @@
 	<body>
 		<script type="module">
 			import {
-				BoxGeometry,
 				Color,
 				Group,
                 AxesHelper,
 				Mesh,
-				MeshStandardMaterial,
 				PerspectiveCamera,
-				PlaneGeometry,
 				PointLight,
 				Scene,
 				WebGLRenderer
 			} from './js/three.module.js';
-
 			import { OrbitControls } from './js/OrbitControls.js';
+            import { Cube } from './js/cube.module.js'
 
             const scene = new Scene();
-            scene.background = new Color( 0x000000);
+            scene.background = new Color( 0x202020);
 
-            const camera = new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 70 );
+            const camera = new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 100 );
             camera.position.z = 50;
+            camera.position.y = 50;
+            camera.position.x = 50;
 
             const renderer = new WebGLRenderer( { antialias: true } );
             renderer.setPixelRatio( window.devicePixelRatio );
@@ -44,105 +43,34 @@
             lights[ 1 ] = new PointLight( 0xffffff, 1, 0 );
             lights[ 2 ] = new PointLight( 0xffffff, 1, 0 );
             lights[ 3 ] = new PointLight( 0xffffff, 1, 0 );
+            lights[ 4 ] = new PointLight( 0xffffff, 1, 0 );
+            lights[ 5 ] = new PointLight( 0xffffff, 1, 0 );
 
-            lights[ 0 ].position.set( 0, 200, 0 );
-            lights[ 1 ].position.set( 100, 200, 100 );
-            lights[ 2 ].position.set( - 100, - 200, - 100 );
-            lights[ 3 ].position.set( 0, 0, 200 );
+            lights[ 0 ].position.set( 100,   0,   0 );
+            lights[ 1 ].position.set(   0, 100,   0 );
+            lights[ 2 ].position.set(   0,   0, 100 );
+            lights[ 3 ].position.set(-100,   0,   0 );
+            lights[ 4 ].position.set(   0,-100,   0 );
+            lights[ 5 ].position.set(   0,   0,-100 );
 
             scene.add( lights[ 0 ] );
             scene.add( lights[ 1 ] );
             scene.add( lights[ 2 ] );
             scene.add( lights[ 3 ] );
+            scene.add( lights[ 4 ] );
+            scene.add( lights[ 5 ] );
 
-            const baseMaterial    = new MeshStandardMaterial( { color: 0x202020, flatShading: true } );
-            const redMaterial     = new MeshStandardMaterial( { color: 0xff0000, flatShading: true } );
-            const greenMaterial   = new MeshStandardMaterial( { color: 0x00ff00, flatShading: true } );
-            const blueMaterial    = new MeshStandardMaterial( { color: 0x0000ff, flatShading: true } );
-            const orangeMaterial  = new MeshStandardMaterial( { color: 0xff8000, flatShading: true } );
-            const whiteMaterial   = new MeshStandardMaterial( { color: 0xffffff, flatShading: true } );
-            const yellowMaterial  = new MeshStandardMaterial( { color: 0xffff00, flatShading: true } );
-            const geometry = new PlaneGeometry( 9.5, 9.5, 1, 1);
-
-            const cube = new Group();
-
-
-            const boxMesh = new Mesh( new BoxGeometry(9.95,9.95,9.95), baseMaterial);
-            cube.add(boxMesh);
-
-            const topMesh = new Mesh( geometry, whiteMaterial);
-            topMesh.position.y = 5;
-            topMesh.rotation.x = -Math.PI/2;
-            cube.add( topMesh );
-
-            const bottomMesh = new Mesh( geometry, redMaterial);
-            bottomMesh.position.y = -5;
-            bottomMesh.rotation.x = Math.PI/2;
-            cube.add( bottomMesh );
-
-            const frontMesh = new Mesh( geometry, greenMaterial);
-            frontMesh.position.z = 5;
-            cube.add( frontMesh );
-
-            const backMesh = new Mesh( geometry, yellowMaterial);
-            backMesh.position.z = -5;
-            backMesh.rotation.x = Math.PI;
-            cube.add( backMesh );
-
-            const leftMesh = new Mesh( geometry, orangeMaterial);
-            leftMesh.position.x = -5;
-            leftMesh.rotation.y = -Math.PI / 2;
-            cube.add( leftMesh );
-
-            const rightMesh = new Mesh( geometry, blueMaterial);
-            rightMesh.position.x = 5;
-            rightMesh.rotation.y = Math.PI / 2;
-            cube.add( rightMesh );
-
-            const axesHelper = new AxesHelper( 50 );
+            const axesHelper = new AxesHelper( 35 );
+            axesHelper.position.z = -15.2;
+            axesHelper.position.y = -15.2;
+            axesHelper.position.x = -15.2;
             scene.add( axesHelper );
 
-
-            const col = new Group();
-            col.add( cube );
-
-            const cube2 = cube.clone(true);
-            cube2.position.z = 10.1;
-			col.add( cube2 );
-
-            const cube3 = cube.clone(true);
-            cube3.position.z = -10.1;
-			col.add( cube3 );
-
-            const slice = new Group();
-            slice.add( col );
-
-            const col2 = col.clone(true);
-            col2.position.y = 10.1;
-            slice.add( col2 );
-
-            const col3 = col.clone(true);
-            col3.position.y = -10.1;
-            slice.add( col3 );
-
-
-            const group = new Group();
-            group.add( slice );
-
-            const slice2 = slice.clone(true);
-            slice2.position.x = 10.1;
-            group.add( slice2 );
-
-            const slice3 = slice.clone(true);
-            slice3.position.x = -10.1;
-            group.add( slice3 );
-
-            scene.add( group );
+            const cube = new Cube(scene);
 
 			function render() {
 				requestAnimationFrame( render );
-                group.rotation.x += 0.005;
-                //group.rotation.y += 0.005;
+                cube.animate();
 				renderer.render( scene, camera );
 			}
 			window.addEventListener( 'resize', function () {
