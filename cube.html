@@ -66,7 +66,9 @@
             axesHelper.position.x = -15.2;
             scene.add( axesHelper );
 
-            const cube = new Cube(scene);
+            const cube = new Cube();
+            scene.add(cube.getMesh())
+            cube.fullPresent();
 
 			function render() {
 				requestAnimationFrame( render );
