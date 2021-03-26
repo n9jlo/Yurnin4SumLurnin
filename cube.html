@@ -8,6 +8,10 @@
 		</style>
 	</head>
 	<body>
+        <div>
+            <button onClick="document.body.cube.fullPresent()">ShowOff</button>
+            <button onClick="document.body.cube.rotate(1, 1)">Rotate</button>
+        </div>
 		<script type="module">
 			import {
 				Color,
@@ -81,6 +85,7 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 			}, false );
 			render();
+            document.body.cube = cube;
 		</script>
 	</body>
 </html>

@@ -17,8 +17,23 @@ class Animatable {
     animate() {
         this.func(this.obj, this.stepCount / this.steps);
         this.stepCount += 1;
-        return (this.steps == this.stepCount);
+        return (this.steps < this.stepCount);
     }
+}
+
+class AnimatedRotation extends Animatable {
+  constructor(obj, axis, weight) {
+    super(obj, null);
+    this.func = this.rotate;
+    this.axis = axis;
+    this.weight = weight * (Math.PI/180);
+  }
+  rotate(obj, count) {
+    if(count == 0) {
+      this.start = obj.rotation[this.axis];
+    }
+    obj.rotation[this.axis] = this.start + (count * this.weight);
+  }
 }
 
 class CubeCell extends Group {
@@ -71,7 +86,6 @@ class CubeCell extends Group {
         this.position.x = x * this.size;
         this.position.y = y * this.size;
         this.position.z = z * this.size;
-
     }
 }
 
@@ -110,20 +124,37 @@ export class Cube {
 
   animate() {
     if (this.animationSteps.length > 0) {
-        var isDone = this.animationSteps[0].animate();
-        if (isDone) {
-            this.animationSteps.shift();
-        }
+      var isDone = this.animationSteps[0].animate();
+      if (isDone) {
+        this.animationSteps.shift();
+      }
     }
   }
 
+  _doAnim(f) {
+    this.animationSteps.push(new Animatable(this, f, 180));
+  }
+
   fullPresent() {
-    this.animationSteps.push(new Animatable(this, function(o, p) {o.group.rotation.x = p * Math.PI * 2}, 360));
-    this.animationSteps.push(new Animatable(this, function(o, p) {o.group.rotation.y = p * Math.PI * 2}, 360));
-    this.animationSteps.push(new Animatable(this, function(o, p) {o.group.rotation.z = p * Math.PI * 2}, 360));
+    this._doAnim(function(o, p) {
+      o.group.rotation.y = Math.sin(p * Math.PI) * Math.PI;
+    });
+    this._doAnim(function(o, p) {
+      o.group.rotation.z = Math.sin(p * Math.PI) * Math.PI/2;
+    });
   }
 
   rotate(face, isClockWise) {
-      // face should be 
-  }
+      // face should be
+      //
+      // Top    Center is {1, 2, 1}
+      // Bottom Center is {1, 0, 1}
+      // Left   Center is {0, 1, 1}
+      // Right  Center is {2, 1, 1}
+      // Front  Center is {1, 1, 0}
+      // Back   Center is {1, 1, 2}
+      
+      const obj = this.data[1][2][1];
+      this.animationSteps.push(new AnimatedRotation(obj, 'y', 180));
+    }
 }
