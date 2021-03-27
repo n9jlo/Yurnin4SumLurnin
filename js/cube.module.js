@@ -23,7 +23,7 @@ class Animatable {
 
 class AnimatedRotation extends Animatable {
   constructor(obj, axis, weight) {
-    super(obj, null);
+    super(obj, null, 40);
     this.func = this.rotate;
     this.axis = axis;
     this.weight = weight * (Math.PI/180);
@@ -33,6 +33,11 @@ class AnimatedRotation extends Animatable {
       this.start = obj.rotation[this.axis];
     }
     obj.rotation[this.axis] = this.start + (count * this.weight);
+    if (count == 1) {
+      // Do the finish activity.  All this group's children are merged back to the parent, and this group is removed.
+      const f = function(item, index) { obj.parent.attach(item) }
+      obj.children.slice().forEach(f);
+    }
   }
 }
 
@@ -128,11 +133,14 @@ export class Cube {
       if (isDone) {
         this.animationSteps.shift();
       }
+    } else {
+      return false;
     }
+    return true;
   }
 
   _doAnim(f) {
-    this.animationSteps.push(new Animatable(this, f, 180));
+    this.animationSteps.push(new Animatable(this, f, 90));
   }
 
   fullPresent() {
@@ -143,18 +151,78 @@ export class Cube {
       o.group.rotation.z = Math.sin(p * Math.PI) * Math.PI/2;
     });
   }
+  getCellAt(j, k, face) {
+    switch(face) {
+      case 0: // TOP
+        return(this.data[j][2][k]);
+      case 1: // BOTTOM
+        return(this.data[j][0][k]);
+      case 2: // LEFT
+        return(this.data[2][j][k]);
+      case 3: // RIGHT
+        return(this.data[0][j][k]);
+      case 4: // FRONT
+        return(this.data[j][k][2]);
+      case 5: // BACK
+        return(this.data[j][k][0]);
+    }
+  }
+
+  setCellAt(j, k, face, obj) {
+    switch(face) {
+      case 0: // TOP
+        this.data[j][2][k] = obj;
+        break;
+      case 1: // BOTTOM
+        this.data[j][0][k] = obj;
+        break;
+      case 2: // LEFT
+        this.data[2][j][k] = obj;
+        break;
+      case 3: // RIGHT
+        this.data[0][j][k] = obj;
+        break;
+      case 4: // FRONT
+        this.data[j][k][2] = obj;
+        break;
+      case 5: // BACK
+        this.data[j][k][0] = obj;
+        break;
+    }
+  }
 
   rotate(face, isClockWise) {
-      // face should be
-      //
-      // Top    Center is {1, 2, 1}
-      // Bottom Center is {1, 0, 1}
-      // Left   Center is {0, 1, 1}
-      // Right  Center is {2, 1, 1}
-      // Front  Center is {1, 1, 0}
-      // Back   Center is {1, 1, 2}
-      
-      const obj = this.data[1][2][1];
-      this.animationSteps.push(new AnimatedRotation(obj, 'y', 180));
+    // face should be
+    //
+    // Top    Center is {1, 2, 1}
+    // Bottom Center is {1, 0, 1}
+    // Left   Center is {0, 1, 1}
+    // Right  Center is {2, 1, 1}
+    // Front  Center is {1, 1, 0}
+    // Back   Center is {1, 1, 2}
+    const tempGroup = new Group();
+    this.group.add(tempGroup);
+    for (var i = 0; i < 9; i++) {
+      var j = i % 3;
+      var k = Math.floor(i/3);
+      var cell = this.getCellAt(j, k, face);
+      tempGroup.add(cell);
     }
+    const axisArr = ['y', 'y', 'x', 'x', 'z', 'z'];
+    const rotArr =  [ 90, -90,  90, -90,  90, -90];
+    this.animationSteps.push(new AnimatedRotation(tempGroup, axisArr[face], rotArr[face]));
+
+    const jArr = [0, 1, 2, 2, 2, 1, 0, 0, 0];
+    const kArr = [0, 0, 0, 1, 2, 2, 2, 1, 0];
+    var tempCell = null;
+    for (var i = 0; i < 9; i++) {
+      var j = jArr[i];
+      var k = kArr[i];
+      const thisCell = this.getCellAt(j, k, face);
+      if (tempCell != null) {
+        this.setCellAt(j, k, face, tempCell);
+      }
+      tempCell = thisCell;
+    }
+  }
 }

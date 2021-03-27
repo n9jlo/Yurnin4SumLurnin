@@ -1,29 +1,31 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>3x3 cube</title>
-		<style>
-			body { margin: 0; }
-		</style>
-	</head>
-	<body>
+    <head>
+        <meta charset="utf-8">
+        <title>3x3 cube</title>
+        <style>
+            body { margin: 0; }
+        </style>
+    </head>
+    <body>
         <div>
-            <button onClick="document.body.cube.fullPresent()">ShowOff</button>
-            <button onClick="document.body.cube.rotate(1, 1)">Rotate</button>
+            <button onClick="document.body.cube.fullPresent();">Show</button>
+            <button onClick="document.body.cube.rotate(0, 1);">U</button>
+            <button onClick="document.body.cube.rotate(3, 1);">R</button>
+            <button onClick="document.body.cube.rotate(4, 1);">F</button>
         </div>
-		<script type="module">
-			import {
-				Color,
-				Group,
+        <script type="module">
+            import {
+                Color,
+                Group,
                 AxesHelper,
-				Mesh,
-				PerspectiveCamera,
-				PointLight,
-				Scene,
-				WebGLRenderer
-			} from './js/three.module.js';
-			import { OrbitControls } from './js/OrbitControls.js';
+                Mesh,
+                PerspectiveCamera,
+                PointLight,
+                Scene,
+                WebGLRenderer
+            } from './js/three.module.js';
+            import { OrbitControls } from './js/OrbitControls.js';
             import { Cube } from './js/cube.module.js'
 
             const scene = new Scene();
@@ -72,20 +74,21 @@
 
             const cube = new Cube();
             scene.add(cube.getMesh())
-            cube.fullPresent();
+            //cube.fullPresent();
 
-			function render() {
-				requestAnimationFrame( render );
+            function render() {
+                requestAnimationFrame( render );
                 cube.animate();
-				renderer.render( scene, camera );
-			}
-			window.addEventListener( 'resize', function () {
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
-				renderer.setSize( window.innerWidth, window.innerHeight );
-			}, false );
-			render();
+                renderer.render( scene, camera );
+            }
+            window.addEventListener( 'resize', function () {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize( window.innerWidth, window.innerHeight );
+            }, false );
+            render();
             document.body.cube = cube;
-		</script>
-	</body>
+            document.body.render = render;
+        </script>
+    </body>
 </html>
