@@ -92,6 +92,13 @@ class CubeCell extends Group {
         this.position.y = y * this.size;
         this.position.z = z * this.size;
     }
+
+    toString() {
+      const RAD2DEG = (180 / Math.PI);
+      const ang = function(val) {return Math.floor(val*RAD2DEG);};
+      return " Px("+Math.floor(this.position.x)+") Py("+Math.floor(this.position.y)+") Pz("+Math.floor(this.position.z)+")" + 
+             " Rx("+ang(this.rotation.x)+") Ry("+ang(this.rotation.y)+") Rz("+ang(this.rotation.z)+")";
+    }
 }
 
 export class Cube {
@@ -158,9 +165,9 @@ export class Cube {
       case 1: // BOTTOM
         return(this.data[j][0][k]);
       case 2: // LEFT
-        return(this.data[2][j][k]);
-      case 3: // RIGHT
         return(this.data[0][j][k]);
+      case 3: // RIGHT
+        return(this.data[2][j][k]);
       case 4: // FRONT
         return(this.data[j][k][2]);
       case 5: // BACK
@@ -170,6 +177,12 @@ export class Cube {
 
   setCellAt(j, k, face, obj) {
     switch(face) {
+      // Top    Center is {1, 2, 1}
+      // Bottom Center is {1, 0, 1}
+      // Left   Center is {0, 1, 1}
+      // Right  Center is {2, 1, 1}
+      // Front  Center is {1, 1, 0}
+      // Back   Center is {1, 1, 2}
       case 0: // TOP
         this.data[j][2][k] = obj;
         break;
@@ -177,10 +190,10 @@ export class Cube {
         this.data[j][0][k] = obj;
         break;
       case 2: // LEFT
-        this.data[2][j][k] = obj;
+        this.data[0][j][k] = obj;
         break;
       case 3: // RIGHT
-        this.data[0][j][k] = obj;
+        this.data[2][j][k] = obj;
         break;
       case 4: // FRONT
         this.data[j][k][2] = obj;
@@ -192,14 +205,6 @@ export class Cube {
   }
 
   rotate(face, isClockWise) {
-    // face should be
-    //
-    // Top    Center is {1, 2, 1}
-    // Bottom Center is {1, 0, 1}
-    // Left   Center is {0, 1, 1}
-    // Right  Center is {2, 1, 1}
-    // Front  Center is {1, 1, 0}
-    // Back   Center is {1, 1, 2}
     const tempGroup = new Group();
     this.group.add(tempGroup);
     for (var i = 0; i < 9; i++) {
@@ -209,20 +214,30 @@ export class Cube {
       tempGroup.add(cell);
     }
     const axisArr = ['y', 'y', 'x', 'x', 'z', 'z'];
-    const rotArr =  [ 90, -90,  90, -90,  90, -90];
+    const rotArr =  [ -90, 90,  90, -90,  -90, 90];
     this.animationSteps.push(new AnimatedRotation(tempGroup, axisArr[face], rotArr[face]));
 
-    const jArr = [0, 1, 2, 2, 2, 1, 0, 0, 0];
-    const kArr = [0, 0, 0, 1, 2, 2, 2, 1, 0];
-    var tempCell = null;
-    for (var i = 0; i < 9; i++) {
-      var j = jArr[i];
-      var k = kArr[i];
-      const thisCell = this.getCellAt(j, k, face);
-      if (tempCell != null) {
-        this.setCellAt(j, k, face, tempCell);
+    tempArr = new Array(this.depth * this.depth);
+    for (var i = 0; i < this.depth; i++) {
+      for (var j = 0; j < this.depth; j++) {
+        tempArr[ (i * this.depth) + j] = this.getCellAt(j, this.depth - i);
       }
-      tempCell = thisCell;
+    }
+    for (var i = 0; i < this.depth; i++) {
+      for (var j = 0; j < this.depth; j++) {
+        this.setCellAt(i, j, face, tempArr[(i * this.depth) + j]);
+      }
+    }
+  }
+
+  logCube() {
+    for (var x = 0; x < this.depth; x++) {
+      for (var y = 0; y < this.depth; y++) {
+        for (var z = 0; z < this.depth; z++) {
+          const cell = this.data[x][y][z];
+          console.log("cell["+x+"]["+y+"]["+z+"]="+cell.toString())
+        }
+      }
     }
   }
 }
