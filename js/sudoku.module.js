@@ -9,9 +9,29 @@ export class SudokuCell {
     this.domElement = null;
   }
 
-  domainRemove(i) {
-    delete this.domain[i];
+  domainSize() {
+    return Object.keys(this.domain).length;
   }
+
+  domainRemove(i) {
+    var retVal = false;
+    if ( this.domainSize() > 1) {
+      retVal = delete this.domain[i];
+    }
+    if (this.domainSize() == 1) {
+      // Switch to BIG mode.
+      this.bigDiv.style = "display:block;";
+      this.bigDiv.innerText = "" + Object.keys(this.domain)[0];
+      this.littleDiv.style = "display:none;";
+    }
+    console.log("End of domain remove and and domain size is: " + this.domainSize());
+    return retVal;
+  }
+
+  littleMode() {
+    this.bigDiv.style = "display:none;";
+    this.littleDiv.style = "display:block;";
+}
 
   domainAdd(i) {
     this.domain[i] = 1;
@@ -27,10 +47,13 @@ export class SudokuCell {
     this.bigDiv = document.createElement("div");
     this.bigDiv.setAttribute("class", "s1 s2");
     od.appendChild(this.bigDiv);
-    this.bigDiv.style.display = "none";
+    this.bigDiv.style= "display:none;";
+    this.bigDiv.sudokuCell = this;
+    this.bigDiv.onclick = function() {this.sudokuCell.littleMode();};
 
     this.littleDiv = document.createElement("div");
     this.littleDiv.setAttribute("class", "s1");
+    this.littleDiv.style= "display:block;";
     od.appendChild(this.littleDiv);
 
     var table = document.createElement("table");
@@ -53,8 +76,9 @@ export class SudokuCell {
         cellElem.sudokuCell = this;
         cellElem.onclick = function() {
           if (this.style.opacity == "1") {
-            this.style.opacity = "10%";
-            this.sudokuCell.domainRemove(this.sudokuNumber);
+            if( this.sudokuCell.domainRemove(this.sudokuNumber)) {
+              this.style.opacity = "10%";
+            }
           } else {
             this.style.opacity = "100%";
             this.sudokuCell.domainAdd(this.sudokuNumber);
@@ -63,6 +87,5 @@ export class SudokuCell {
         }
       }
     }
-
   }
 }
