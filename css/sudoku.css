@@ -1,0 +1,21 @@
+.s0 {
+    border: 1px solid black;
+    cursor: default;
+}
+
+.s1 {
+    border: 1px solid black;
+    height: 60px;
+    width: 60px;
+}
+.s2 {
+    font-size: 50px;
+    text-align: center;
+    vertical-align: middle;
+}
+.s3 {
+    font-size: x-small;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+    border: 1px solid black;
+}
