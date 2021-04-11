@@ -255,4 +255,12 @@ export class Cube {
       }
     }
   }
+
+  randomize() {
+    // Pick 25 random numbers from 0 to 11
+    for (var cnt = 0; cnt < 25; cnt++) {
+      var rnd = Math.floor(Math.random() * 12);
+      this.rotate(Math.floor(rnd / 2), rnd % 2 == 0);
+    }
+  }
 }
