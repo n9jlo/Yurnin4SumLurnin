@@ -21,6 +21,44 @@ class Animatable {
     }
 }
 
+class RotateCommand {
+  constructor(cube, face, isClockWise) {
+    this.cube = cube;
+    this.face = face;
+    this.isClockWise = isClockWise;
+    this.anim = null;
+  }
+
+  animate() {
+    if (this.anim == null) {
+      var depth = this.cube.depth;
+      this.tempArr = new Array(depth * depth);
+      const tempGroup = new Group();
+      this.cube.group.add(tempGroup);
+      var d = depth - 1;
+      for (var i = 0; i < depth; i++) {
+        for (var j = 0; j < depth; j++) {
+          tempGroup.add(this.cube.getCellAt(i, j, this.face));
+          this.tempArr[ (i * depth) + j] = this.cube.getCellAt(d - j, i, this.face);
+        }
+      }
+      const axisArr = ['y', 'y', 'x', 'x', 'z', 'z'];
+      const rotArr =  [ -90, 90,  90, -90,  -90, 90];
+      this.anim = new AnimatedRotation(tempGroup, axisArr[this.face], rotArr[this.face]);
+    }
+    var isDone = this.anim.animate();
+    if( isDone ) {
+      var depth = this.cube.depth;
+      for (var i = 0; i < depth; i++) {
+        for (var j = 0; j < depth; j++) {
+          this.cube.setCellAt(i, j, this.face, this.tempArr[(i * depth) + j]);
+        }
+      }
+    }
+    return isDone;
+  }
+}
+
 class AnimatedRotation extends Animatable {
   constructor(obj, axis, weight) {
     super(obj, null, 40);
@@ -196,26 +234,7 @@ export class Cube {
   }
 
   rotate(face, isClockWise) {
-    var tempArr = new Array(this.depth * this.depth);
-    const tempGroup = new Group();
-    this.group.add(tempGroup);
-    var d = this.depth - 1;
-    for (var i = 0; i < this.depth; i++) {
-      for (var j = 0; j < this.depth; j++) {
-        tempGroup.add(this.getCellAt(i, j, face));
-        tempArr[ (i * this.depth) + j] = this.getCellAt(d-j, i, face);
-      }
-    }
-    const axisArr = ['y', 'y', 'x', 'x', 'z', 'z'];
-    const rotArr =  [ -90, 90,  90, -90,  -90, 90];
-    this.animationSteps.push(new AnimatedRotation(tempGroup, axisArr[face], rotArr[face]));
-
-    for (var i = 0; i < this.depth; i++) {
-      for (var j = 0; j < this.depth; j++) {
-        console.log("Assigning (" + j + ", " + (d - i) + ") to (" + i + ", " + j + ")");
-        this.setCellAt(i, j, face, tempArr[(i * this.depth) + j]);
-      }
-    }
+    this.animationSteps.push(new RotateCommand(this, face, isClockWise));
   }
 
   logCube() {
