@@ -1,95 +1,134 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>3x3 cube</title>
-        <style>
-            body { margin: 0; }
-        </style>
-    </head>
-    <body>
-        <div>
-            <button onClick="document.body.cube.fullPresent();">Show</button>
-            <button onClick="document.body.cube.logCube();">Log</button>
-            <button onClick="document.body.cube.rotate(0, 1);">U</button>
-            <button onClick="document.body.cube.rotate(3, 1);">R</button>
-            <button onClick="document.body.cube.rotate(4, 1);">F</button>
-        </div>
-        <script type="module">
-            import {
-                Color,
-                Group,
-                AxesHelper,
-                Mesh,
-                PerspectiveCamera,
-                PointLight,
-                Scene,
-                WebGLRenderer
-            } from './js/three.module.js';
-            import { OrbitControls } from './js/OrbitControls.js';
-            import { Cube } from './js/cube.module.js'
 
-            const scene = new Scene();
-            scene.background = new Color( 0x202020);
+<head>
+    <meta charset="utf-8">
+    <title>3x3 cube</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
 
-            const camera = new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 100 );
-            camera.position.z = 50;
-            camera.position.y = 50;
-            camera.position.x = 50;
+<body>
+    <div>
+        <button onClick="document.body.cube.fullPresent();">Show</button>
+        <!-- <button onClick="document.body.cube.logCube();">Log</button> -->
+        <button onClick="document.body.cube.rotate(0, 1);">U</button>
+        <button onClick="document.body.cube.rotate(0, 0);">U'</button>
+        <button onClick="document.body.cube.rotate(1, 1);">D</button>
+        <button onClick="document.body.cube.rotate(1, 0);">D'</button>
+        <button onClick="document.body.cube.rotate(2, 1);">L</button>
+        <button onClick="document.body.cube.rotate(2, 0);">L'</button>
+        <button onClick="document.body.cube.rotate(3, 1);">R</button>
+        <button onClick="document.body.cube.rotate(3, 0);">R'</button>
+        <button onClick="document.body.cube.rotate(4, 1);">F</button>
+        <button onClick="document.body.cube.rotate(4, 0);">F'</button>
+        <button onClick="document.body.cube.rotate(5, 1);">B</button>
+        <button onClick="document.body.cube.rotate(5, 0);">B'</button>
+    </div>
+    <script type="module">
+        import {
+            Color,
+            Group,
+            AxesHelper,
+            Mesh,
+            PerspectiveCamera,
+            PointLight,
+            Scene,
+            WebGLRenderer
+        } from './js/three.module.js';
+        import { OrbitControls } from './js/OrbitControls.js';
+        import { Cube } from './js/cube.module.js'
 
-            const renderer = new WebGLRenderer( { antialias: true } );
-            renderer.setPixelRatio( window.devicePixelRatio );
-            renderer.setSize( window.innerWidth, window.innerHeight );
-            document.body.appendChild( renderer.domElement );
+        const scene = new Scene();
+        scene.background = new Color(0x202020);
 
-            const orbit = new OrbitControls( camera, renderer.domElement );
-            orbit.enableZoom = false;
+        const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = 50;
+        camera.position.y = 50;
+        camera.position.x = 50;
 
-            const lights = [];
-            lights[ 0 ] = new PointLight( 0xffffff, 1, 0 );
-            lights[ 1 ] = new PointLight( 0xffffff, 1, 0 );
-            lights[ 2 ] = new PointLight( 0xffffff, 1, 0 );
-            lights[ 3 ] = new PointLight( 0xffffff, 1, 0 );
-            lights[ 4 ] = new PointLight( 0xffffff, 1, 0 );
-            lights[ 5 ] = new PointLight( 0xffffff, 1, 0 );
+        const renderer = new WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
 
-            lights[ 0 ].position.set( 100,   0,   0 );
-            lights[ 1 ].position.set(   0, 100,   0 );
-            lights[ 2 ].position.set(   0,   0, 100 );
-            lights[ 3 ].position.set(-100,   0,   0 );
-            lights[ 4 ].position.set(   0,-100,   0 );
-            lights[ 5 ].position.set(   0,   0,-100 );
+        const orbit = new OrbitControls(camera, renderer.domElement);
+        orbit.enableZoom = false;
 
-            scene.add( lights[ 0 ] );
-            scene.add( lights[ 1 ] );
-            scene.add( lights[ 2 ] );
-            scene.add( lights[ 3 ] );
-            scene.add( lights[ 4 ] );
-            scene.add( lights[ 5 ] );
+        const lights = [];
+        lights[0] = new PointLight(0xffffff, 1, 0);
+        lights[1] = new PointLight(0xffffff, 1, 0);
+        lights[2] = new PointLight(0xffffff, 1, 0);
+        lights[3] = new PointLight(0xffffff, 1, 0);
+        lights[4] = new PointLight(0xffffff, 1, 0);
+        lights[5] = new PointLight(0xffffff, 1, 0);
 
-            const axesHelper = new AxesHelper( 35 );
-            axesHelper.position.z = -15.2;
-            axesHelper.position.y = -15.2;
-            axesHelper.position.x = -15.2;
-            scene.add( axesHelper );
+        lights[0].position.set(100, 0, 0);
+        lights[1].position.set(0, 100, 0);
+        lights[2].position.set(0, 0, 100);
+        lights[3].position.set(-100, 0, 0);
+        lights[4].position.set(0, -100, 0);
+        lights[5].position.set(0, 0, -100);
 
-            const cube = new Cube();
-            scene.add(cube.getMesh())
-            //cube.fullPresent();
+        scene.add(lights[0]);
+        scene.add(lights[1]);
+        scene.add(lights[2]);
+        scene.add(lights[3]);
+        scene.add(lights[4]);
+        scene.add(lights[5]);
 
-            function render() {
-                requestAnimationFrame( render );
-                cube.animate();
-                renderer.render( scene, camera );
+        const axesHelper = new AxesHelper(35);
+        axesHelper.position.z = -15.2;
+        axesHelper.position.y = -15.2;
+        axesHelper.position.x = -15.2;
+        scene.add(axesHelper);
+
+        const cube = new Cube();
+        scene.add(cube.getMesh())
+        //cube.fullPresent();
+
+        function render() {
+            requestAnimationFrame(render);
+            cube.animate();
+            renderer.render(scene, camera);
+        }
+        window.addEventListener('resize', function () {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }, false);
+        var isClockWise = true;
+        window.addEventListener('keyup', function (event) {
+            if (event.altKey) {
+                return;
             }
-            window.addEventListener( 'resize', function () {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize( window.innerWidth, window.innerHeight );
-            }, false );
-            render();
-            document.body.cube = cube;
-            document.body.render = render;
-        </script>
-    </body>
+            switch (event.code) {
+                case 'ShiftLeft':
+                case 'ShiftRight': isClockWise = 1; break;
+            }
+        });
+        window.addEventListener('keydown', function (event) {
+            if (event.altKey) {
+                return;
+            }
+            switch (event.code) {
+                case 'ShiftLeft':
+                case 'ShiftRight': isClockWise = 0; break;
+                case 'KeyU': cube.rotate(0,isClockWise); break;
+                case 'KeyD': cube.rotate(1,isClockWise); break;
+                case 'KeyL': cube.rotate(2,isClockWise); break;
+                case 'KeyR': cube.rotate(3,isClockWise); break;
+                case 'KeyF': cube.rotate(4,isClockWise); break;
+                case 'KeyB': cube.rotate(5,isClockWise); break; 
+            }
+        });
+        render();
+        document.body.cube = cube;
+        document.body.render = render;
+    </script>
+</body>
+
 </html>

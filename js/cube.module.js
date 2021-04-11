@@ -39,12 +39,20 @@ class RotateCommand {
       for (var i = 0; i < depth; i++) {
         for (var j = 0; j < depth; j++) {
           tempGroup.add(this.cube.getCellAt(i, j, this.face));
-          this.tempArr[ (i * depth) + j] = this.cube.getCellAt(d - j, i, this.face);
+          if (this.isClockWise) {
+            this.tempArr[ (i * depth) + j] = this.cube.getCellAt(d - j, i, this.face);
+          } else {
+            this.tempArr[ (i * depth) + j] = this.cube.getCellAt(j, d - i, this.face);
+          }
         }
       }
       const axisArr = ['y', 'y', 'x', 'x', 'z', 'z'];
       const rotArr =  [ -90, 90,  90, -90,  -90, 90];
-      this.anim = new AnimatedRotation(tempGroup, axisArr[this.face], rotArr[this.face]);
+      var rotation = rotArr[this.face];
+      if (!this.isClockWise) {
+        rotation *= -1;
+      }
+      this.anim = new AnimatedRotation(tempGroup, axisArr[this.face], rotation);
     }
     var isDone = this.anim.animate();
     if( isDone ) {
@@ -206,9 +214,9 @@ export class Cube {
   IJFtoXYZ(i,j,face) {
     var d = this.depth - 1;
     switch(face) {
-      case 0: // TOP
+      case 0: // UP
         return [i, 2, d - j];
-      case 1: // BOTTOM
+      case 1: // DOWN
         return [i, 0, j];
       case 2: // LEFT
         return [0, j, i];
