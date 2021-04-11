@@ -45,17 +45,21 @@ class CubeCell extends Group {
     constructor(x=1, y=1, z=1, size=10) {
         super();
         this.size = size * 1.02;
+        this.name = "" + (x+1) + "," + (y+1) + "," + (z+1);
         const planeSize = size * 0.95;
         const boxSize   = size * 0.995;
 
-        const baseMaterial    = new MeshStandardMaterial( { color: 0x202020, flatShading: true } );
+        const baseMaterial    = new MeshStandardMaterial( { color: 0x404040, flatShading: true } );
         const redMaterial     = new MeshStandardMaterial( { color: 0xff0000, flatShading: true } );
         const greenMaterial   = new MeshStandardMaterial( { color: 0x00ff00, flatShading: true } );
         const blueMaterial    = new MeshStandardMaterial( { color: 0x0000ff, flatShading: true } );
         const orangeMaterial  = new MeshStandardMaterial( { color: 0xff8000, flatShading: true } );
         const whiteMaterial   = new MeshStandardMaterial( { color: 0xffffff, flatShading: true } );
         const yellowMaterial  = new MeshStandardMaterial( { color: 0xffff00, flatShading: true } );
-        const geometry = new PlaneGeometry( planeSize, planeSize, 1, 1);
+        const average = 1;
+        var variablePlaneSize1 = planeSize * (average + ((1-average) * Math.random()));
+        var variablePlaneSize2 = planeSize * (average + ((1-average) * Math.random()));
+        var geometry = new PlaneGeometry( variablePlaneSize1, variablePlaneSize2, 1, 1);
 
         const boxMesh = new Mesh( new BoxGeometry(boxSize, boxSize, boxSize), baseMaterial);
         this.add(boxMesh);
@@ -96,8 +100,10 @@ class CubeCell extends Group {
     toString() {
       const RAD2DEG = (180 / Math.PI);
       const ang = function(val) {return Math.floor(val*RAD2DEG);};
-      return " Px("+Math.floor(this.position.x)+") Py("+Math.floor(this.position.y)+") Pz("+Math.floor(this.position.z)+")" + 
-             " Rx("+ang(this.rotation.x)+") Ry("+ang(this.rotation.y)+") Rz("+ang(this.rotation.z)+")";
+      return "Name(" + this.name + ") P("+(Math.floor(this.position.x / this.size)+1)+","+
+                                          (Math.floor(this.position.y / this.size)+1)+","+
+                                          (Math.floor(this.position.z / this.size)+1)+")";
+//             " Rx("+ang(this.rotation.x)+") Ry("+ang(this.rotation.y)+") Rz("+ang(this.rotation.z)+")";
     }
 }
 
@@ -158,73 +164,55 @@ export class Cube {
       o.group.rotation.z = Math.sin(p * Math.PI) * Math.PI/2;
     });
   }
-  getCellAt(j, k, face) {
+
+  IJFtoXYZ(i,j,face) {
+    var d = this.depth - 1;
     switch(face) {
       case 0: // TOP
-        return(this.data[j][2][k]);
+        return [i, 2, d - j];
       case 1: // BOTTOM
-        return(this.data[j][0][k]);
+        return [i, 0, j];
       case 2: // LEFT
-        return(this.data[0][j][k]);
+        return [0, j, i];
       case 3: // RIGHT
-        return(this.data[2][j][k]);
+        return [2, j, d - i];
       case 4: // FRONT
-        return(this.data[j][k][2]);
+        return [i, j, 2];
       case 5: // BACK
-        return(this.data[j][k][0]);
+        return [d - i, j, 0];
     }
   }
 
-  setCellAt(j, k, face, obj) {
-    switch(face) {
-      // Top    Center is {1, 2, 1}
-      // Bottom Center is {1, 0, 1}
-      // Left   Center is {0, 1, 1}
-      // Right  Center is {2, 1, 1}
-      // Front  Center is {1, 1, 0}
-      // Back   Center is {1, 1, 2}
-      case 0: // TOP
-        this.data[j][2][k] = obj;
-        break;
-      case 1: // BOTTOM
-        this.data[j][0][k] = obj;
-        break;
-      case 2: // LEFT
-        this.data[0][j][k] = obj;
-        break;
-      case 3: // RIGHT
-        this.data[2][j][k] = obj;
-        break;
-      case 4: // FRONT
-        this.data[j][k][2] = obj;
-        break;
-      case 5: // BACK
-        this.data[j][k][0] = obj;
-        break;
-    }
+  getCellAt(i, j, f) {
+    var xyz = this.IJFtoXYZ(i, j, f);
+    console.log("getCellAt(" + i + "," + j + "," + f + ")=" + xyz);
+    return this.data[xyz[0]][xyz[1]][xyz[2]];
+  }
+
+  setCellAt(i, j, f, obj) {
+    var xyz = this.IJFtoXYZ(i, j, f);
+    console.log("setCellAt(" + i + "," + j + "," + f + ")=" + xyz);
+    this.data[xyz[0]][xyz[1]][xyz[2]] = obj;
   }
 
   rotate(face, isClockWise) {
+    var tempArr = new Array(this.depth * this.depth);
     const tempGroup = new Group();
     this.group.add(tempGroup);
-    for (var i = 0; i < 9; i++) {
-      var j = i % 3;
-      var k = Math.floor(i/3);
-      var cell = this.getCellAt(j, k, face);
-      tempGroup.add(cell);
+    var d = this.depth - 1;
+    for (var i = 0; i < this.depth; i++) {
+      for (var j = 0; j < this.depth; j++) {
+        tempGroup.add(this.getCellAt(i, j, face));
+        tempArr[ (i * this.depth) + j] = this.getCellAt(d-j, i, face);
+      }
     }
     const axisArr = ['y', 'y', 'x', 'x', 'z', 'z'];
     const rotArr =  [ -90, 90,  90, -90,  -90, 90];
     this.animationSteps.push(new AnimatedRotation(tempGroup, axisArr[face], rotArr[face]));
 
-    tempArr = new Array(this.depth * this.depth);
     for (var i = 0; i < this.depth; i++) {
       for (var j = 0; j < this.depth; j++) {
-        tempArr[ (i * this.depth) + j] = this.getCellAt(j, this.depth - i);
-      }
-    }
-    for (var i = 0; i < this.depth; i++) {
-      for (var j = 0; j < this.depth; j++) {
+        console.log("Assigning (" + j + ", " + (d - i) + ") to (" + i + ", " + j + ")");
         this.setCellAt(i, j, face, tempArr[(i * this.depth) + j]);
       }
     }
